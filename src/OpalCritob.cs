@@ -14,6 +14,8 @@ namespace TestMod
     public class OpalCritob : Fisob
     {
         public static readonly AbstractPhysicalObject.AbstractObjectType AbstrOpal = new("Opal", true);
+        public static readonly PlacedObject.Type Opal = new("Opal", true);
+
         public static readonly MultiplayerUnlocks.SandboxUnlockID mOpal = new("Opal", true);
 
         public OpalCritob() : base(AbstrOpal)
