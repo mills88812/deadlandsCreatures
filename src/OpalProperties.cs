@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Fisobs.Properties;
 
-namespace TestMod
+namespace DeadlandsCreatures
 {
     public class OpalProperties : ItemProperties
     {
