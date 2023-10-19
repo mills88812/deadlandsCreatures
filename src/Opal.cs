@@ -6,7 +6,7 @@ using RWCustom;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace TestMod
+namespace DeadlandsCreatures
 {
     public class Opal : PlayerCarryableItem, IDrawable, IPlayerEdible
     {

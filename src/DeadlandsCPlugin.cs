@@ -7,7 +7,11 @@ using Fisobs.Core;
 
 using BepInEx;
 using System.Security.Permissions;
-using TestMod;
+using DeadlandsCreatures;
+using DeadlandsCreatures.Hooks;
+using Rewired.UI.ControlMapper;
+using DevConsole.Commands;
+using DevConsole;
 
 // IMPORTANT
 // This requires Fisobs to work!
@@ -17,26 +21,29 @@ using TestMod;
 #pragma warning disable CS0618 // Do not remove the following line.
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
 
-namespace TestMod
+namespace DeadlandsCreatures
 {
-
 
     // See https://rainworldmodding.miraheze.org/wiki/Downpour_Reference/Mod_Directories
 
-    [BepInPlugin("Deadlands.DeadLandsCreautres", "DeadLandsCreatures", "0.1.0")]
+    [BepInPlugin("DeadLandsCreautres", "DeadLands Creatures", "0.1.1")]
     public class Plugin : BaseUnityPlugin
     {
+
         public void OnEnable()
         {
+            DeadlandsCEnums.RegisterEnums();
+
+            CreatureHooks.Apply();
+
             Content.Register(new OpalCritob());
+
             On.Room.Loaded += Room_Loaded;
-
-
         }
 
         private void Room_Loaded(On.Room.orig_Loaded orig, Room self)
         {
-                        orig(self);
+            orig(self);
             for (int i = 0; i < self.roomSettings.placedObjects.Count; i++)
             {
                 if (self.roomSettings.placedObjects[i].type == OpalCritob.Opal)
@@ -47,8 +54,9 @@ namespace TestMod
                     break;
                 }
             }
-
+            //AbstractCreature creature = new AbstractCreature(self.game.world, StaticWorld.GetCreatureTemplate(Type.Buzzard), null, self.GetWorldCoordinate(self.RandomPos()), self.game.GetNewID());
+            //creature.RealizeInRoom();
+            //Debug.Log("Spawned " + Type.Buzzard);
         }
     }
-
 }
