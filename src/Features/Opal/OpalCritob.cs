@@ -9,7 +9,7 @@ using Fisobs.Items;
 using Fisobs.Properties;
 using Fisobs.Sandbox;
 
-namespace DeadlandsCreatures
+namespace DeadlandsCreatures.Features.Opal
 {
     public class OpalCritob : Fisob
     {
@@ -27,7 +27,7 @@ namespace DeadlandsCreatures
             RegisterUnlock(mOpal, parent: MultiplayerUnlocks.SandboxUnlockID.Slugcat, data: 0);
         }
 
-        public override AbstractPhysicalObject Parse(World world, EntitySaveData saveData, SandboxUnlock? unlock)
+        public override AbstractPhysicalObject Parse(World world, EntitySaveData saveData, SandboxUnlock unlock)
         {
             // Crate data is just floats separated by ; characters.
             string[] p = saveData.CustomData.Split(';');

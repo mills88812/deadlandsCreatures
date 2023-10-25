@@ -7,11 +7,11 @@ using Fisobs.Core;
 
 using BepInEx;
 using System.Security.Permissions;
-using DeadlandsCreatures;
 using DeadlandsCreatures.Hooks;
 using Rewired.UI.ControlMapper;
 using DevConsole.Commands;
 using DevConsole;
+using DeadlandsCreatures.Features.Opal;
 
 // IMPORTANT
 // This requires Fisobs to work!

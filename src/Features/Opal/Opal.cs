@@ -6,17 +6,17 @@ using RWCustom;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace DeadlandsCreatures
+namespace DeadlandsCreatures.Features.Opal
 {
     public class Opal : PlayerCarryableItem, IDrawable, IPlayerEdible
     {
-        	public AbstractConsumable AbstrConsumable
-	{
-		get
-		{
-			return this.abstractPhysicalObject as AbstractConsumable;
-		}
-	}
+        public AbstractConsumable AbstrConsumable
+        {
+            get
+            {
+                return abstractPhysicalObject as AbstractConsumable;
+            }
+        }
 
 
 
@@ -35,16 +35,16 @@ namespace DeadlandsCreatures
 
         public Opal(AbstractPhysicalObject abstractPhysicalObject) : base(abstractPhysicalObject)
         {
-            base.bodyChunks = new BodyChunk[1];
-            base.bodyChunks[0] = new BodyChunk(this, 0, new Vector2(0f, 0f), 8f, 0.2f);
-            this.bodyChunkConnections = new PhysicalObject.BodyChunkConnection[0];
-            base.airFriction = 0.99999f;
-            base.gravity = 0.9f;
-            this.bounce = 0.3f;
-            this.surfaceFriction = 0.7f;
-            this.collisionLayer = 1;
-            base.waterFriction = 0.95f;
-            base.buoyancy = 1.1f;
+            bodyChunks = new BodyChunk[1];
+            bodyChunks[0] = new BodyChunk(this, 0, new Vector2(0f, 0f), 8f, 0.2f);
+            bodyChunkConnections = new BodyChunkConnection[0];
+            airFriction = 0.99999f;
+            gravity = 0.9f;
+            bounce = 0.3f;
+            surfaceFriction = 0.7f;
+            collisionLayer = 1;
+            waterFriction = 0.95f;
+            buoyancy = 1.1f;
         }
 
 
@@ -81,19 +81,19 @@ namespace DeadlandsCreatures
         {
             get
             {
-                return this.bites;
+                return bites;
             }
         }
         public void BitByPlayer(Creature.Grasp grasp, bool eu)
         {
-            this.bites--;
-            this.room.PlaySound((this.bites == 0) ? SoundID.Slugcat_Eat_Dangle_Fruit : SoundID.Slugcat_Bite_Dangle_Fruit, base.firstChunk.pos);
-            base.firstChunk.MoveFromOutsideMyUpdate(eu, grasp.grabber.mainBodyChunk.pos);
-            if (this.bites < 1)
+            bites--;
+            room.PlaySound(bites == 0 ? SoundID.Slugcat_Eat_Dangle_Fruit : SoundID.Slugcat_Bite_Dangle_Fruit, firstChunk.pos);
+            firstChunk.MoveFromOutsideMyUpdate(eu, grasp.grabber.mainBodyChunk.pos);
+            if (bites < 1)
             {
                 (grasp.grabber as Player).ObjectEaten(this);
                 grasp.Release();
-                this.Destroy();
+                Destroy();
             }
         }
 
@@ -121,35 +121,35 @@ namespace DeadlandsCreatures
             sLeaser.sprites = new FSprite[2];
             sLeaser.sprites[0] = new FSprite("DangleFruit0A", true);
             sLeaser.sprites[1] = new FSprite("DangleFruit0B", true);
-            this.AddToContainer(sLeaser, rCam, null);
+            AddToContainer(sLeaser, rCam, null);
         }
 
         public void DrawSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
         {
-            Vector2 vector = Vector2.Lerp(base.firstChunk.lastPos, base.firstChunk.pos, timeStacker);
-            Vector2 v = Vector3.Slerp(this.lastRotation, this.rotation, timeStacker);
-            this.lastDarkness = this.darkness;
-            this.darkness = rCam.room.Darkness(vector) * (1f - rCam.room.LightSourceExposure(vector));
-            if (this.darkness != this.lastDarkness)
+            Vector2 vector = Vector2.Lerp(firstChunk.lastPos, firstChunk.pos, timeStacker);
+            Vector2 v = Vector3.Slerp(lastRotation, rotation, timeStacker);
+            lastDarkness = darkness;
+            darkness = rCam.room.Darkness(vector) * (1f - rCam.room.LightSourceExposure(vector));
+            if (darkness != lastDarkness)
             {
-                this.ApplyPalette(sLeaser, rCam, rCam.currentPalette);
+                ApplyPalette(sLeaser, rCam, rCam.currentPalette);
             }
             for (int i = 0; i < 2; i++)
             {
                 sLeaser.sprites[i].x = vector.x - camPos.x;
                 sLeaser.sprites[i].y = vector.y - camPos.y;
                 sLeaser.sprites[i].rotation = Custom.VecToDeg(v);
-                sLeaser.sprites[i].element = Futile.atlasManager.GetElementWithName("DangleFruit" + Custom.IntClamp(3 - this.bites, 0, 2).ToString() + ((i == 0) ? "A" : "B"));
+                sLeaser.sprites[i].element = Futile.atlasManager.GetElementWithName("DangleFruit" + Custom.IntClamp(3 - bites, 0, 2).ToString() + (i == 0 ? "A" : "B"));
             }
-            if (this.blink > 0 && Random.value < 0.5f)
+            if (blink > 0 && Random.value < 0.5f)
             {
-                sLeaser.sprites[1].color = base.blinkColor;
+                sLeaser.sprites[1].color = blinkColor;
             }
             else
             {
-                sLeaser.sprites[1].color = this.color;
+                sLeaser.sprites[1].color = color;
             }
-            if (base.slatedForDeletetion || this.room != rCam.room)
+            if (slatedForDeletetion || room != rCam.room)
             {
                 sLeaser.CleanSpritesAndRemove();
             }
@@ -161,7 +161,7 @@ namespace DeadlandsCreatures
 
 
             sLeaser.sprites[0].color = White;
-            this.color = Color.Lerp(new Color(0.5f, 1f, 0.7f), palette.blackColor, this.darkness);
+            color = Color.Lerp(new Color(0.5f, 1f, 0.7f), palette.blackColor, darkness);
         }
 
 
@@ -171,7 +171,7 @@ namespace DeadlandsCreatures
 
 
 
-        public void AddToContainer(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, FContainer? newContainer)
+        public void AddToContainer(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, FContainer newContainer)
         {
             newContainer ??= rCam.ReturnFContainer("Items");
 

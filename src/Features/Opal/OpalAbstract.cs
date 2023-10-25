@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Fisobs.Core;
 
-namespace DeadlandsCreatures
+namespace DeadlandsCreatures.Features.Opal
 {
     public class OpalAbstract : AbstractPhysicalObject
     {

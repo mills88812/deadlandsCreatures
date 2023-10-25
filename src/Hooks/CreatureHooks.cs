@@ -1,15 +1,7 @@
-﻿using Fisobs.Creatures;
-using IL.LizardCosmetics;
-using Mono.Cecil.Cil;
+﻿using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using RWCustom;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace DeadlandsCreatures.Hooks
@@ -48,20 +40,8 @@ namespace DeadlandsCreatures.Hooks
 
             On.CreatureTemplate.ctor_Type_CreatureTemplate_List1_List1_Relationship += OnCreatureTemplateCtor;
 
-            // Vulture
-
-            On.Vulture.ctor += OnVultureCtor;
-
-            On.Vulture.VultureState.ctor += OnVultureStateCtor;
-
-            On.VultureGraphics.ctor += OnVultureGraphicsCtor;
-
-            IL.Vulture.ctor += ILVutureCtor;
-            IL.Vulture.Violence += ILVultureViolence;
-
-            IL.VultureGraphics.ctor += ILVultureGraphicsCtor;
-
-            // Vulture Mask
+            // Creature Specific Hooks
+            BuzzardHooks.Apply();
         }
 
         #region StaticWorld
@@ -91,7 +71,7 @@ namespace DeadlandsCreatures.Hooks
             list3.Add(new TileConnectionResistance(MovementConnection.MovementType.SideHighway, 10f, PathCost.Legality.Allowed));
             CreatureTemplate template = (new CreatureTemplate(Type.Buzzard, creatureTemplate, list2, list3, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Ignores, 0f)));
             template.baseDamageResistance = 9.5f;
-            template.baseStunResistance = 4.5f;
+            template.baseStunResistance = 7f;
             template.abstractedLaziness = 9;
             template.AI = true;
             template.requireAImap = true;
@@ -100,7 +80,7 @@ namespace DeadlandsCreatures.Hooks
             template.doPreBakedPathing = false;
             template.preBakedPathingAncestor = creatureTemplate;
             template.offScreenSpeed = 2.5f;
-            template.bodySize = 6f;
+            template.bodySize = 5f;
             template.grasps = 1;
             template.stowFoodInDen = true;
             template.shortcutSegments = 5;
@@ -143,6 +123,8 @@ namespace DeadlandsCreatures.Hooks
         #region WorldLoader
         private static CreatureTemplate.Type OnCreatureTypeFromString(On.WorldLoader.orig_CreatureTypeFromString orig, string s)
         {
+            // String Conversion Here
+
             if (s.Equals("buzzard", StringComparison.OrdinalIgnoreCase))
             {
                 return Type.Buzzard;
@@ -198,6 +180,7 @@ namespace DeadlandsCreatures.Hooks
                 c.Emit(OpCodes.Ldarg_0);
                 c.EmitDelegate<Action<AbstractCreature>>((abstractCreature) =>
                 {
+                    // More Abstract AI if needed
                     if (abstractCreature.creatureTemplate.AI && abstractCreature.creatureTemplate.type == Type.Buzzard)
                     {
                         abstractCreature.abstractAI = new VultureAbstractAI(abstractCreature.world, abstractCreature);
@@ -217,6 +200,7 @@ namespace DeadlandsCreatures.Hooks
                 c.Emit(OpCodes.Ldarg_0);
                 c.EmitDelegate<Action<AbstractCreature>>((abstractCreature) =>
                 {
+                    // Creature Realization
                     if (abstractCreature.creatureTemplate.TopAncestor().type == Type.Buzzard)
                     {
                         abstractCreature.realizedCreature = new Vulture(abstractCreature, abstractCreature.world);
@@ -243,117 +227,11 @@ namespace DeadlandsCreatures.Hooks
 
         private static void OnCreatureTemplateCtor(On.CreatureTemplate.orig_ctor_Type_CreatureTemplate_List1_List1_Relationship orig, CreatureTemplate self, CreatureTemplate.Type type, CreatureTemplate ancestor, List<TileTypeResistance> tileResistances, List<TileConnectionResistance> connectionResistances, CreatureTemplate.Relationship defaultRelationship)
         {
-            // I guess this way works...
+            // Creature Templates
             orig(self, type, ancestor, tileResistances, connectionResistances, defaultRelationship);
             if (type == Type.Buzzard)
             {
                 self.name = "Buzzard";
-            }
-        }
-
-        #endregion
-
-        #region Vulture
-
-        private static void ILVutureCtor(ILContext il)
-        {
-            var c = new ILCursor(il);
-
-            ILLabel postCheck = null;
-
-            if (c.TryGotoNext(MoveType.After, // Smaller body chunks
-                x => x.MatchLdcR4(1.4f),
-                x => x.MatchStloc(0)))
-            {
-                c.Emit(OpCodes.Ldarg_0); // Thank you forthbridge for this method
-                c.Emit(OpCodes.Ldloc_0);
-                c.EmitDelegate<Func<Vulture, float, float>>((vulture, value) =>
-                {
-                    if (vulture.Template.type == Type.Buzzard)
-                    {
-                        return 0.7f;
-                    }
-                    return value;
-                });
-                c.Emit(OpCodes.Stloc_0);
-            } else
-            {
-                Debug.Log("ILVutureCtor failed!");
-            }
-        }
-        private static void OnVultureStateCtor(On.Vulture.VultureState.orig_ctor orig, Vulture.VultureState self, AbstractCreature creature)
-        {
-            orig(self, creature);
-            if (creature.creatureTemplate.type == Type.Buzzard)
-            {
-
-            }
-        }
-
-        private static void OnVultureCtor(On.Vulture.orig_ctor orig, Vulture self, AbstractCreature abstractCreature, World world)
-        {
-            orig(self, abstractCreature, world);
-            if (self.Template.type == Type.Buzzard)
-            {
-                foreach(var chunk in self.bodyChunks)
-                {
-                    chunk.rad = chunk.rad - 2.5f;
-                }
-            }
-        }
-
-        private static void ILVultureViolence(ILContext il)
-        {
-            var c = new ILCursor(il);
-
-            if (c.TryGotoNext(MoveType.After, // Less disencouragement which means more presistance
-                x => x.MatchLdcR4(0.3f),
-                x => x.MatchMul()))
-            {
-                c.Emit(OpCodes.Ldarg_0);
-                c.Emit(OpCodes.Ldc_R4);
-                c.EmitDelegate<Func<Vulture, float, float>>((vulture, value) =>
-                {
-                    if (vulture.Template.type == Type.Buzzard)
-                    {
-                        return 0.1f;
-                    }
-                    return value;
-                });
-                c.Emit(OpCodes.Mul);
-            }
-            else
-            {
-                Debug.Log("ILVultureViolence failed!");
-            }
-        }
-
-        private static void OnVultureGraphicsCtor(On.VultureGraphics.orig_ctor orig, VultureGraphics self, Vulture ow)
-        {
-            orig(self, ow);
-            if (self.vulture.Template.type == Type.Buzzard)
-            {
-                self.ColorA = new HSLColor(Mathf.Lerp(0.9f, 1.6f, UnityEngine.Random.value), Mathf.Lerp(0.5f, 0.7f, UnityEngine.Random.value), Mathf.Lerp(0.5f, 0.7f, UnityEngine.Random.value));
-                self.ColorB = new HSLColor(self.ColorA.hue + Mathf.Lerp(-0.25f, 0.25f, UnityEngine.Random.value), Mathf.Lerp(0.8f, 1f, 1f - UnityEngine.Random.value * UnityEngine.Random.value), Mathf.Lerp(0.45f, 1f, UnityEngine.Random.value * UnityEngine.Random.value));
-            }
-        }
-
-        private static void ILVultureGraphicsCtor(ILContext il)
-        {
-            var c = new ILCursor(il);
-            if (c.TryGotoNext(MoveType.After,
-                x => x.MatchLdcI4(0x19),
-                x => x.MatchCall(typeof(UnityEngine.Random).GetMethod("Range", new[] { typeof(int), typeof(int) })),
-                x => x.MatchStfld(typeof(VultureGraphics).GetField("feathersPerWing"))))
-            {
-                c.Emit(OpCodes.Ldarg_0);
-                c.EmitDelegate<Action<VultureGraphics>>((graphics) =>
-                {
-                    if (graphics.vulture.Template.type == Type.Buzzard)
-                    {
-                        graphics.feathersPerWing = 0;
-                    }
-                });
             }
         }
 
