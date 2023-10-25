@@ -69,7 +69,7 @@ namespace DeadlandsCreatures.Hooks
             }
             else
             {
-                Debug.Log("ILVutureCtor failed!");
+                Plugin.Logger.LogFatal("ILVutureCtor failed!");
             }
         }
         private static void OnVultureStateCtor(On.Vulture.VultureState.orig_ctor orig, Vulture.VultureState self, AbstractCreature creature)
@@ -129,24 +129,21 @@ namespace DeadlandsCreatures.Hooks
             var c = new ILCursor(il);
 
             if (c.TryGotoNext(MoveType.After, // Less disencouragement which means more presistance
-                x => x.MatchLdcR4(0.3f),
-                x => x.MatchMul()))
+                x => x.MatchCallvirt(typeof(VultureAI).GetMethod("set_disencouraged", new[] { typeof(float) }))))
             {
                 c.Emit(OpCodes.Ldarg_0);
-                c.Emit(OpCodes.Ldc_R4);
-                c.EmitDelegate<Func<Vulture, float, float>>((vulture, value) =>
+                c.EmitDelegate<Action<Vulture>>((vulture) =>
                 {
                     if (vulture.Template.type == Type.Buzzard)
                     {
-                        return 0.1f;
+                        Debug.Log("Buzzard Violence!");
+                        vulture.AI.disencouraged = vulture.AI.disencouraged * 0.15f;
                     }
-                    return value;
                 });
-                c.Emit(OpCodes.Mul);
             }
             else
             {
-                Debug.Log("ILVultureViolence failed!");
+                Plugin.Logger.LogFatal("ILVultureViolence failed!");
             }
         }
 
@@ -177,6 +174,10 @@ namespace DeadlandsCreatures.Hooks
                     }
                 });
             }
+            else
+            {
+                Plugin.Logger.LogFatal("ILVultureGraphicsCtor failed!");
+            }
         }
 
         private static void ILInitiateSprites(ILContext il)
@@ -196,6 +197,10 @@ namespace DeadlandsCreatures.Hooks
                         sprites[graphics.BodySprite].scale = 0.8f;
                     }
                 });
+            }
+            else
+            {
+                Plugin.Logger.LogFatal("ILInitiateSprites failed!");
             }
         }
 
