@@ -12,6 +12,8 @@ namespace DeadlandsCreatures
         
         public void OnEnable()
         {
+            On.RainWorld.OnModsInit += Extras.WrapInit(LoadResources);
+
             On.Room.Loaded += Room_Loaded;
             Content.Register(new CactusFisob());
             Content.Register(new CactusChunkFisob());
@@ -31,6 +33,11 @@ namespace DeadlandsCreatures
                     break;
                 }
             }
+        }
+
+        private void LoadResources(RainWorld rainWorld)
+        {
+            Futile.atlasManager.LoadImage("CactusChunk"); // not definitive just for testing
         }
     }
 }

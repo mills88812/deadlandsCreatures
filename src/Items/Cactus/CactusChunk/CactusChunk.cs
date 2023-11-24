@@ -54,6 +54,22 @@ sealed class CactusChunk : PlayerCarryableItem, IDrawable, IPlayerEdible
     }
 
     /////////////////////////////////////
+    // Stun
+    /////////////////////////////////////
+
+    public override void Collide(PhysicalObject otherObject, int myChunk, int otherChunk)
+    {
+        base.Collide(otherObject, myChunk, otherChunk);
+
+        if (otherObject is Creature && this.firstChunk.vel.magnitude > 5)
+        {
+            Creature creature = (Creature)otherObject;
+            creature.Stun(40);
+            this.room.AddObject(new CreatureSpasmer(creature, true, creature.stun));
+        }
+    }
+
+    /////////////////////////////////////
     // Consumption
     /////////////////////////////////////
 
@@ -96,7 +112,7 @@ sealed class CactusChunk : PlayerCarryableItem, IDrawable, IPlayerEdible
     {
         sLeaser.sprites = new FSprite[1];
 
-        sLeaser.sprites[0] = new FSprite("Circle20");
+        sLeaser.sprites[0] = new FSprite("CactusChunk");
 
         AddToContainer(sLeaser, rCam, null);
     }

@@ -4,6 +4,6 @@
 	"version": "0.1.0",
 	"authors": "mills888",
 	"description": "the creature addon for deadlands",
-	"requirements": [ "lizardcustomizer", "fisobs ],
+	"requirements": [ "lizardcustomizer", "fisobs" ],
 	"requirements_names": [ "lizard customizer", "Fisobs" ]
 }
