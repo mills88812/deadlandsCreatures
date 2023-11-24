@@ -148,8 +148,22 @@ namespace DeadlandsCreatures
             {
                 return;
             }
+
             Vector2 vector = Vector2.Lerp(base.firstChunk.pos, base.firstChunk.lastPos, 0.35f);
-            this.room.AddObject(new Explosion(this.room, this, vector, 7, 175f, 2f, 2f, 280f, 0f, this.thrownBy, 0.7f, 160f, 0f));
+
+            this.room.AddObject(new Explosion(this.room, this, vector, 7, 75f, 2f, 2f, 280f, 0f, this.thrownBy, 0.7f, 160f, 0f));
+            this.room.AddObject(new Explosion.ExplosionLight(vector, 160f, 1f, 3, Color.green));
+            this.room.AddObject(new ExplosionSpikes(this.room, vector, 9, 4f, 5f, 5f, 90f, Color.green));
+            this.room.AddObject(new ShockWave(vector, 60f, 0.045f, 4, false));
+
+            for (int n = 34; n > 0; n--)
+            {
+                this.room.AddObject(new Spark(this.firstChunk.pos, Custom.RNV() * 2, Color.green, null, 10, 20));
+            }
+
+            this.room.PlaySound(SoundID.Snail_Pop, this.firstChunk.pos, 1f, 1.6f);
+            this.room.PlaySound(SoundID.Rock_Hit_Creature, this.firstChunk.pos, 2f, 1.5f);
+
             for (int i = 0; i < 25; i++)
             {
                 Vector2 a = Custom.RNV();
@@ -191,8 +205,8 @@ namespace DeadlandsCreatures
         public override void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
         {
             sLeaser.sprites = new FSprite[2];
-            sLeaser.sprites[0] = new FSprite("DangleFruit0A", true);
-            sLeaser.sprites[1] = new FSprite("DangleFruit0B", true);
+            sLeaser.sprites[0] = new FSprite("icon_Cactus", true);
+            sLeaser.sprites[1] = new FSprite("icon_Cactus", true);
             this.AddToContainer(sLeaser, rCam, null);
         }
 
@@ -211,7 +225,7 @@ namespace DeadlandsCreatures
                 sLeaser.sprites[i].x = vector.x - camPos.x;
                 sLeaser.sprites[i].y = vector.y - camPos.y;
                 sLeaser.sprites[i].rotation = Custom.VecToDeg(v);
-                sLeaser.sprites[i].element = Futile.atlasManager.GetElementWithName("DangleFruit" + Custom.IntClamp(3 - 3, 0, 2).ToString() + ((i == 0) ? "A" : "B"));
+                //sLeaser.sprites[i].element = Futile.atlasManager.GetElementWithName("DangleFruit" + Custom.IntClamp(3 - 3, 0, 2).ToString() + ((i == 0) ? "A" : "B"));
             }
             if (this.blink > 0 && Random.value < 0.5f)
             {

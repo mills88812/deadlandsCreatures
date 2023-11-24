@@ -13,10 +13,8 @@ namespace DeadlandsCreatures
 
                 CactusChunkAbstract cacc = new CactusChunkAbstract(room.world, pos, room.game.GetNewID()); // Create an abstract object
 
-                cacc.realizedObject = new CactusChunk(cacc, room.MiddleOfTile(pos.Tile), launchDir + (Vector2.up)); // Realize the object (Create the PhysicalObject)
-
-                cacc.realizedObject.PlaceInRoom(room); // ...Place the object? Not sure why this is needed, but it doesn't spawn without it
-                room.abstractRoom.AddEntity(cacc); // Add the object to the room
+                cacc.RealizeInRoom(); // Realize and place the object (add the object to the room)
+                //cacc.realizedObject.firstChunk.vel += launchDir * 9f;
             }
         }
     }
