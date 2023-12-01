@@ -1,17 +1,10 @@
-using System;
-using System.Linq;
-using System.Text;
-using System.Collections.Generic;
-using UnityEngine;
 using Fisobs.Core;
 
 using BepInEx;
+using BepInEx.Logging;
 using System.Security.Permissions;
-using DeadlandsCreatures;
 using DeadlandsCreatures.Hooks;
-using Rewired.UI.ControlMapper;
-using DevConsole.Commands;
-using DevConsole;
+using DeadlandsCreatures.Features.Opal;
 
 // IMPORTANT
 // This requires Fisobs to work!
@@ -29,9 +22,12 @@ namespace DeadlandsCreatures
     [BepInPlugin("DeadLandsCreautres", "DeadLands Creatures", "0.1.1")]
     public class Plugin : BaseUnityPlugin
     {
+        public static new ManualLogSource Logger { get; private set; } = null!;
 
         public void OnEnable()
         {
+            Logger = base.Logger;
+
             DeadlandsCEnums.RegisterEnums();
 
             CreatureHooks.Apply();
