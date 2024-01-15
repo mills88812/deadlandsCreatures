@@ -24,6 +24,8 @@ namespace DeadlandsCreatures
     {
         public static CreatureTemplate.Type Buzzard;
         public static CreatureTemplate.Type CandleMouse;
+        public static CreatureTemplate.Type SpinePlant;
+        public static CreatureTemplate.Type SaltWorm;
         public static void RegisterValues()
         {
             Buzzard = new CreatureTemplate.Type("Buzzard", true);

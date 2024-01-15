@@ -15,12 +15,6 @@
       <Folder Include="Creatures\" />
     </ItemGroup>
     
-    <ItemGroup>
-      <Reference Include="DevConsole">
-        <HintPath>..\..\..\Programs\Steam\steamapps\workshop\content\312520\2920528044\plugins\DevConsole.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-    
     <Target Name="GenerateMod" AfterTargets="PostBuildEvent">
 		<ItemGroup>
 			<RemovePlugins Include="../mod/plugins/*.dll" />
