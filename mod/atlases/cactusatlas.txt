@@ -1,0 +1,92 @@
+{"frames": {
+
+"cactus_fragment_01.png":
+{
+	"frame": {"x":2,"y":2,"w":16,"h":16},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
+	"sourceSize": {"w":16,"h":16}
+},
+"cactus_fragment_02.png":
+{
+	"frame": {"x":20,"y":2,"w":16,"h":16},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
+	"sourceSize": {"w":16,"h":16}
+},
+"cactus_fragment_03.png":
+{
+	"frame": {"x":38,"y":2,"w":16,"h":16},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
+	"sourceSize": {"w":16,"h":16}
+},
+"cactus_fragment_04.png":
+{
+	"frame": {"x":2,"y":20,"w":16,"h":16},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
+	"sourceSize": {"w":16,"h":16}
+},
+"cactus_fragment_05.png":
+{
+	"frame": {"x":20,"y":20,"w":16,"h":16},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
+	"sourceSize": {"w":16,"h":16}
+},
+"cactus_fragment_06.png":
+{
+	"frame": {"x":38,"y":20,"w":16,"h":16},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
+	"sourceSize": {"w":16,"h":16}
+},
+"cactus_fragment_07.png":
+{
+	"frame": {"x":2,"y":38,"w":16,"h":16},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
+	"sourceSize": {"w":16,"h":16}
+},
+"cactus_fragment_08.png":
+{
+	"frame": {"x":20,"y":38,"w":16,"h":16},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
+	"sourceSize": {"w":16,"h":16}
+},
+"cactus_fragment_10.png":
+{
+	"frame": {"x":38,"y":38,"w":16,"h":16},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
+	"sourceSize": {"w":16,"h":16}
+},
+"cactus_item.png":
+{
+	"frame": {"x":2,"y":56,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "cactusatlas.png",
+	"format": "RGBA8888",
+	"size": {"w":56,"h":90},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:f67a4f4199621571a7eda12a1a6b5029:c238d8387747ef83f108857dcc478f29:de7a79a2e63248fc2055e3d7b4b66963$"
+}
+}

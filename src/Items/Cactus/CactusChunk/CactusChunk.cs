@@ -5,8 +5,6 @@ namespace DeadlandsCreatures;
 
 sealed class CactusChunk : PlayerCarryableItem, IDrawable, IPlayerEdible
 {
-    public Color color;
-
     public AbstractConsumable AbstrConsumable => abstractPhysicalObject as AbstractConsumable;
 
     int bites = 2;
@@ -18,6 +16,9 @@ sealed class CactusChunk : PlayerCarryableItem, IDrawable, IPlayerEdible
     public bool Edible => true;
 
     public bool AutomaticPickUp => true;
+
+    public int chuckType;
+
 
     /////////////////////////////////////
     // Constructor
@@ -112,7 +113,14 @@ sealed class CactusChunk : PlayerCarryableItem, IDrawable, IPlayerEdible
     {
         sLeaser.sprites = new FSprite[1];
 
-        sLeaser.sprites[0] = new FSprite("CactusChunk");
+        int spriteNumber = (this.abstractPhysicalObject as CactusChunkAbstract).spriteType;
+        string spriteName = "cactus_fragment_0" + spriteNumber;
+        if (spriteNumber > 9)
+        {
+            spriteName = "cactus_fragment_" + spriteNumber;
+        }
+
+        sLeaser.sprites[0] = new FSprite(spriteName);
 
         AddToContainer(sLeaser, rCam, null);
     }
@@ -124,7 +132,7 @@ sealed class CactusChunk : PlayerCarryableItem, IDrawable, IPlayerEdible
         sLeaser.sprites[0].color = color;
         sLeaser.sprites[0].x = pos.x - camPos.x;
         sLeaser.sprites[0].y = pos.y - camPos.y;
-        sLeaser.sprites[0].scale = 0.45f * bites * 0.5f;
+        sLeaser.sprites[0].scale = 0.45f * bites;
 
 
         if (blink > 2)
@@ -141,7 +149,7 @@ sealed class CactusChunk : PlayerCarryableItem, IDrawable, IPlayerEdible
 
     public void ApplyPalette(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, RoomPalette palette)
     {
-        color = new Color(0.784f, 0.949f, 0.729f);
+        color = Color.white;
     }
 
     public void AddToContainer(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, FContainer? newContainer)

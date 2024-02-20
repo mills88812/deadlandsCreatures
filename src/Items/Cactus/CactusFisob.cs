@@ -17,7 +17,7 @@ namespace DeadlandsCreatures
 
             SandboxPerformanceCost = new(linear: 0.2f, 0f);
 
-            RegisterUnlock(mCactus, parent: MultiplayerUnlocks.SandboxUnlockID.Slugcat, data: 0);
+            RegisterUnlock(mCactus, parent: MultiplayerUnlocks.SandboxUnlockID.Slugcat, data: 280);
         }
         
         public override AbstractPhysicalObject Parse(World world, EntitySaveData saveData, SandboxUnlock? unlock)

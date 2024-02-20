@@ -13,7 +13,8 @@ namespace DeadlandsCreatures
 
         public override Color SpriteColor(int data)
         {
-            return RWCustom.Custom.HSL2RGB(data / 1000f, 1000f, 1000f);
+            Debug.Log("" + data + ", " + (data / 1000f));
+            return RWCustom.Custom.HSL2RGB(data / 1000f, 0.65f, 0.5f);
         }
 
         public override string SpriteName(int data)

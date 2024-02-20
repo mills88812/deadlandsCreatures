@@ -38,6 +38,8 @@ namespace DeadlandsCreatures
         private void LoadResources(RainWorld rainWorld)
         {
             Futile.atlasManager.LoadImage("CactusChunk"); // not definitive just for testing
+            FAtlas atlas = Futile.atlasManager.LoadAtlas("atlases/cactusatlas");
+
         }
     }
 }
