@@ -40,27 +40,7 @@ namespace DeadlandsCreatures.Hooks
             
         }
 
-        /*private static void OnIguanaBreed(On.LizardBreeds.orig_BreedTemplate_Type_CreatureTemplate_CreatureTemplate_CreatureTemplate_CreatureTemplate orig, CreatureTemplate.Type type, CreatureTemplate lizardAncestor, CreatureTemplate pinkTemplate, CreatureTemplate blueTemplate, CreatureTemplate greenTemplate)
-        {
-
-            if (type == Type.Iguana)
-            {
-                var temp = orig(CreatureTemplate.Type.PinkLizard, lizardAncestor, pinkTemplate, blueTemplate, greenTemplate);
-                var breedParams = ((LizardBreedParams)temp.breedParameters)!;
-
-                breedParams.baseSpeed = 4.1f;
-                breedParams.terrainSpeeds[1] = new(1.85f, 1f, 1f, 1f);
-                breedParams.terrainSpeeds[2] = new(1.20f, 1f, 0.8f, 1f);
-                breedParams.terrainSpeeds[3] = new(0.5f, 1f, 0.75f, 1f);
-                breedParams.terrainSpeeds[4] = new(.1f, 1f, 1f, 1f);
-                breedParams.terrainSpeeds[5] = new(.2f, 1f, 1f, 1f);
-                breedParams.standardColor = new(.21f, .53f, .9f);
-
-
-            }
-
-            orig(type, lizardAncestor, pinkTemplate, blueTemplate, greenTemplate);
-        }*/
+        
         private static void OnBrownctor(On.Lizard.orig_ctor orig, Lizard self, AbstractCreature abstractCreature, World world)
         {
             orig(self, abstractCreature, world);
@@ -217,7 +197,7 @@ namespace DeadlandsCreatures.Hooks
         private static Color OnBrownBodycolor(On.LizardGraphics.orig_BodyColor orig, LizardGraphics self, float f)
         {
 
-            //.21f, .53f, .9f
+            
             orig(self, f);
 
            
@@ -242,7 +222,7 @@ namespace DeadlandsCreatures.Hooks
         private static void OnBrowncolorBody(On.LizardGraphics.orig_ApplyPalette orig, LizardGraphics self, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, RoomPalette palette)
         {
             //new HSLColor(UnityEngine.Random.Range(0.075f, 0.125f), UnityEngine.Random.Range(0.4f, 0.9f), num8).rgb
-            //.21f, .53f, .9f
+            
             orig(self, sLeaser, rCam, palette);
             if (self.lizard.Template.type == Type.BrownLizard)
             {
