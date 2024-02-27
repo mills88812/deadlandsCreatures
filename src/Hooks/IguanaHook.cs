@@ -10,8 +10,7 @@ using Color = UnityEngine.Color;
 using Random = UnityEngine.Random;
 using LizardCosmetics;
 using Mono.Cecil;
-using DeadlandsCreatures.Features.Buzzard;
-using DeadlandsCreatures.Features.Opal;
+
 
 
 namespace DeadlandsCreatures.Hooks
