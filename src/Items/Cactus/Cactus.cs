@@ -1,4 +1,5 @@
 ﻿using DeadlandsCreatures;
+using MoreSlugcats;
 using Noise;
 using RWCustom;
 using UnityEngine;
@@ -6,7 +7,7 @@ using Random = UnityEngine.Random;
 
 namespace DeadlandsCreatures
 {
-    public class Cactus : Weapon, IDrawable
+    public class Cactus : Weapon, IDrawable, IPlayerEdible
     {
         public override bool HeavyWeapon
         {
@@ -148,8 +149,22 @@ namespace DeadlandsCreatures
             {
                 return;
             }
+
             Vector2 vector = Vector2.Lerp(base.firstChunk.pos, base.firstChunk.lastPos, 0.35f);
-            this.room.AddObject(new Explosion(this.room, this, vector, 7, 175f, 2f, 2f, 280f, 0f, this.thrownBy, 0.7f, 160f, 0f));
+
+            this.room.AddObject(new Explosion(this.room, this, vector, 7, 75f, 2f, 2f, 280f, 0f, this.thrownBy, 0.7f, 160f, 0f));
+            this.room.AddObject(new Explosion.ExplosionLight(vector, 160f, 1f, 3, Color.green));
+            this.room.AddObject(new ExplosionSpikes(this.room, vector, 9, 4f, 5f, 5f, 90f, Color.green));
+            this.room.AddObject(new ShockWave(vector, 60f, 0.045f, 4, false));
+
+            for (int n = 34; n > 0; n--)
+            {
+                this.room.AddObject(new Spark(this.firstChunk.pos, Custom.RNV() * 2, Color.green, null, 10, 20));
+            }
+
+            this.room.PlaySound(SoundID.Snail_Pop, this.firstChunk.pos, 1f, 1.6f);
+            this.room.PlaySound(SoundID.Rock_Hit_Creature, this.firstChunk.pos, 2f, 1.5f);
+
             for (int i = 0; i < 25; i++)
             {
                 Vector2 a = Custom.RNV();
@@ -165,7 +180,7 @@ namespace DeadlandsCreatures
                     }
                 }
             }
-            CactusChunkExplosion.CactusExplosion(this.room, this.room.ToWorldCoordinate(base.firstChunk.pos), Mathf.RoundToInt(Random.Range(3, 6)));
+            CactusChunkExplosion.CactusExplosion(this.room, this.room.ToWorldCoordinate(base.firstChunk.pos), Random.Range(3, 9));
             
             this.room.ScreenMovement(new Vector2?(vector), default(Vector2), 0.6f);
             
@@ -188,11 +203,22 @@ namespace DeadlandsCreatures
             this.Destroy();
         }
 
+        public void BitByPlayer(Creature.Grasp grasp, bool eu)
+        {
+            Bites--;
+            if (Bites >= 0)
+            {
+                room.PlaySound(MoreSlugcatsEnums.MSCSoundID.Duck_Pop, grasp.grabber.mainBodyChunk.pos, 1f, 0.5f + Random.value * 0.5f);
+                CactusChunkExplosion.CactusExplosion(room, room.ToWorldCoordinate(firstChunk.pos), Random.Range(3, 9));
+                grasp.Release();
+                Destroy();
+            }
+        }
+
         public override void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
         {
-            sLeaser.sprites = new FSprite[2];
-            sLeaser.sprites[0] = new FSprite("DangleFruit0A", true);
-            sLeaser.sprites[1] = new FSprite("DangleFruit0B", true);
+            sLeaser.sprites = new FSprite[1];
+            sLeaser.sprites[0] = new FSprite("cactus_item");
             this.AddToContainer(sLeaser, rCam, null);
         }
 
@@ -206,20 +232,19 @@ namespace DeadlandsCreatures
             {
                 this.ApplyPalette(sLeaser, rCam, rCam.currentPalette);
             }
-            for (int i = 0; i < 2; i++)
-            {
-                sLeaser.sprites[i].x = vector.x - camPos.x;
-                sLeaser.sprites[i].y = vector.y - camPos.y;
-                sLeaser.sprites[i].rotation = Custom.VecToDeg(v);
-                sLeaser.sprites[i].element = Futile.atlasManager.GetElementWithName("DangleFruit" + Custom.IntClamp(3 - 3, 0, 2).ToString() + ((i == 0) ? "A" : "B"));
-            }
+
+                sLeaser.sprites[0].x = vector.x - camPos.x;
+                sLeaser.sprites[0].y = vector.y - camPos.y;
+                sLeaser.sprites[0].rotation = Custom.VecToDeg(v);
+                sLeaser.sprites[0].scale = 0.75f;
+
             if (this.blink > 0 && Random.value < 0.5f)
             {
-                sLeaser.sprites[1].color = base.blinkColor;
+                sLeaser.sprites[0].color = base.blinkColor;
             }
             else
             {
-                sLeaser.sprites[1].color = this.color;
+                sLeaser.sprites[0].color = this.color;
             }
             if (base.slatedForDeletetion || this.room != rCam.room)
             {
@@ -229,13 +254,7 @@ namespace DeadlandsCreatures
 
         public override void ApplyPalette(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, RoomPalette palette)
         {
-            sLeaser.sprites[0].color = new Color(0.83f, 1f, 0f);
-            if (ModManager.MSC && rCam.room.game.session is StoryGameSession && rCam.room.world.name == "HR")
-            {
-                this.color = Color.Lerp(RainWorld.SaturatedGold, palette.blackColor, this.darkness);
-                return;
-            }
-            this.color = Color.Lerp(new Color(0f, 1f, 0f), new Color(0.83f, 1f, 0f), this.darkness);
+            color = Color.white;
         }
 
         public override void AddToContainer(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, FContainer newContainer)
@@ -245,6 +264,23 @@ namespace DeadlandsCreatures
             foreach (FSprite fsprite in sLeaser.sprites)
                 newContainer.AddChild(fsprite);
         }
+
+        public void ThrowByPlayer()
+        {
+
+        }
+
+        public AbstractConsumable AbstrConsumable => abstractPhysicalObject as AbstractConsumable;
+
+        public int Bites = 1;
+
+        public int BitesLeft => Bites;
+
+        public int FoodPoints => 0;
+
+        public bool Edible => true;
+
+        public bool AutomaticPickUp => false;
 
         public Vector2? SetRotation;
 

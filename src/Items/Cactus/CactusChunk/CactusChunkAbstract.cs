@@ -4,15 +4,16 @@ namespace DeadlandsCreatures;
 
 sealed class CactusChunkAbstract : AbstractPhysicalObject
 {
-    public CactusChunkAbstract(World world, WorldCoordinate pos, EntityID ID) : base(world, CactusChunkFisob.CactusChunk, null, pos, ID)
+    public CactusChunkAbstract(World world, WorldCoordinate pos, EntityID ID, int type = 0) : base(world, CactusChunkFisob.CactusChunk, null, pos, ID)
     { 
         scaleX = 1;
         scaleY = 1;
         saturation = 0.5f;
         hue = 1f;
-    }
+        spriteType = type;
+}
 
-    public override void Realize()
+public override void Realize()
     {
         base.Realize();
 
@@ -24,6 +25,7 @@ sealed class CactusChunkAbstract : AbstractPhysicalObject
     public float saturation;
     public float scaleX;
     public float scaleY;
+    public int spriteType;
 
     public override string ToString()
     {
