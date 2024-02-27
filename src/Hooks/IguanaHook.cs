@@ -52,27 +52,7 @@ namespace DeadlandsCreatures.Hooks
             LizardCosmetics.Init();
         }
 
-        /*private static void OnIguanaBreed(On.LizardBreeds.orig_BreedTemplate_Type_CreatureTemplate_CreatureTemplate_CreatureTemplate_CreatureTemplate orig, CreatureTemplate.Type type, CreatureTemplate lizardAncestor, CreatureTemplate pinkTemplate, CreatureTemplate blueTemplate, CreatureTemplate greenTemplate)
-        {
-
-            if (type == Type.Iguana)
-            {
-                var temp = orig(CreatureTemplate.Type.PinkLizard, lizardAncestor, pinkTemplate, blueTemplate, greenTemplate);
-                var breedParams = ((LizardBreedParams)temp.breedParameters)!;
-
-                breedParams.baseSpeed = 4.1f;
-                breedParams.terrainSpeeds[1] = new(1.85f, 1f, 1f, 1f);
-                breedParams.terrainSpeeds[2] = new(1.20f, 1f, 0.8f, 1f);
-                breedParams.terrainSpeeds[3] = new(0.5f, 1f, 0.75f, 1f);
-                breedParams.terrainSpeeds[4] = new(.1f, 1f, 1f, 1f);
-                breedParams.terrainSpeeds[5] = new(.2f, 1f, 1f, 1f);
-                breedParams.standardColor = new(.21f, .53f, .9f);
-
-
-            }
-
-            orig(type, lizardAncestor, pinkTemplate, blueTemplate, greenTemplate);
-        }*/
+       
         private static void OnIguanactor(On.Lizard.orig_ctor orig, Lizard self, AbstractCreature abstractCreature, World world)
         {
             orig(self, abstractCreature, world);
