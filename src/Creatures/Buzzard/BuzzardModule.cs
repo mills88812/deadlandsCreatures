@@ -6,7 +6,7 @@ using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
 using Random = UnityEngine.Random;
 
-namespace DeadlandsCreatures.Features.Buzzard
+namespace DeadlandsCreatures.Creatures.Buzzard
 {
     internal class BuzzardModule
     {

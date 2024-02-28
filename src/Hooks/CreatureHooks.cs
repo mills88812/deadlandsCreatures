@@ -1,4 +1,6 @@
-﻿using DeadlandsCreatures.Features.Buzzard;
+﻿using DeadlandsCreatures.Creatures.Buzzard;
+using DeadlandsCreatures.Creatures.CandleMouse;
+using DeadlandsCreatures.Creatures.Iguana;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
@@ -54,37 +56,6 @@ namespace DeadlandsCreatures.Hooks
             On.CreatureTemplate.ctor_Type_CreatureTemplate_List1_List1_Relationship += OnCreatureTemplateCtor;
 
             // Additional Debug
-
-            On.DebugMouse.Update += (orig, self, eu) =>
-            {
-                orig(self, eu);
-                if (!self.room.readyForAI || !self.room.BeingViewed) return;
-
-                string text = self.label.text;
-                text += $"\n\n--buzzardMod--\n";
-                for (int i = 0; i < self.room.physicalObjects.Length; i++)
-                {
-                    for(int n = 0; n < self.room.physicalObjects[i].Count; n++)
-                    {
-                        if (self.room.physicalObjects[i][n] != null && self.room.physicalObjects[i][n] is Vulture)
-                        {
-                            Vulture vulture = (Vulture)self.room.physicalObjects[i][n];
-                            if (vulture.Template.type == Type.Buzzard)
-                            {
-                                BuzzardModule module = null;
-                                BuzzardHooks.BuzzardModule.TryGetValue(vulture, out module);
-                                if (module != null)
-                                {
-                                    text += $"idx: " + n + "\n" + $"grb: {module.grabChunk}     wGrb: {module.wantToGrabChunk}";
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                self.label.text = text;
-                self.label2.text = text;
-            };
 
             // Creature Specific Hooks
             IguanaHook.Apply();
@@ -519,9 +490,65 @@ namespace DeadlandsCreatures.Hooks
             list3.Clear();
             StaticWorld.creatureTemplates[Type.GlowLizard.Index] = template4;
             #endregion
-            
-            /*
+
+            #region CandleMouse
+
+            creatureTemplate = StaticWorld.GetCreatureTemplate(CreatureTemplate.Type.StandardGroundCreature);
+            bool flag2 = creatureTemplate == null;
+            if (flag2)
+            {
+                Debug.Log("CandleMouse Ancestor not found!");
+            }
+            list2.Add(new TileTypeResistance(AItile.Accessibility.OffScreen, 1f, PathCost.Legality.Allowed));
+            list2.Add(new TileTypeResistance(AItile.Accessibility.Floor, 1f, PathCost.Legality.Allowed));
+            list2.Add(new TileTypeResistance(AItile.Accessibility.Corridor, 1f, PathCost.Legality.Allowed));
+            list3.Add(new TileConnectionResistance(MovementConnection.MovementType.Standard, 1f, PathCost.Legality.Allowed));
+            list3.Add(new TileConnectionResistance(MovementConnection.MovementType.OpenDiagonal, 3f, PathCost.Legality.Allowed));
+            list3.Add(new TileConnectionResistance(MovementConnection.MovementType.ReachOverGap, 3f, PathCost.Legality.Allowed));
+            list3.Add(new TileConnectionResistance(MovementConnection.MovementType.ReachUp, 2f, PathCost.Legality.Allowed));
+            list3.Add(new TileConnectionResistance(MovementConnection.MovementType.ReachDown, 2f, PathCost.Legality.Allowed));
+            list3.Add(new TileConnectionResistance(MovementConnection.MovementType.SemiDiagonalReach, 2f, PathCost.Legality.Allowed));
+            list3.Add(new TileConnectionResistance(MovementConnection.MovementType.DropToFloor, 20f, PathCost.Legality.Allowed));
+            list3.Add(new TileConnectionResistance(MovementConnection.MovementType.DropToWater, 20f, PathCost.Legality.Allowed));
+            list3.Add(new TileConnectionResistance(MovementConnection.MovementType.ShortCut, 1.5f, PathCost.Legality.Allowed));
+            list3.Add(new TileConnectionResistance(MovementConnection.MovementType.NPCTransportation, 25f, PathCost.Legality.Allowed));
+            list3.Add(new TileConnectionResistance(MovementConnection.MovementType.OffScreenMovement, 1f, PathCost.Legality.Allowed));
+            list3.Add(new TileConnectionResistance(MovementConnection.MovementType.BetweenRooms, 10f, PathCost.Legality.Allowed));
+            list3.Add(new TileConnectionResistance(MovementConnection.MovementType.Slope, 1.5f, PathCost.Legality.Allowed));
+            template = new CreatureTemplate(Type.CandleMouse, null, list2, list3, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, 0.1f));
+            template.baseDamageResistance = 0.4f;
+            template.baseStunResistance = 0.3f;
+            template.instantDeathDamageLimit = 1f;
+            template.offScreenSpeed = 0.3f;
+            template.abstractedLaziness = 50;
+            template.AI = true;
+            template.requireAImap = true;
+            template.bodySize = 0.6f;
+            template.stowFoodInDen = true;
+            template.shortcutSegments = 2;
+            template.preBakedPathingAncestor = creatureTemplate;
+            template.grasps = 1;
+            template.visualRadius = 800f;
+            template.communityInfluence = 1f;
+            template.dangerousToPlayer = 0.1f;
+            template.waterRelationship = CreatureTemplate.WaterRelationship.AirAndSurface;
+            template.meatPoints = 2;
+            template.canSwim = true;
+            template.BlizzardWanderer = false;
+            template.BlizzardAdapted = false;
+            template.jumpAction = "Sit/Sleep";
+            template.pickupAction = "Flashbang";
+            template.throwAction = "Squeak";
+            template.usesNPCTransportation = true;
+            list2.Clear();
+            list3.Clear();
+            StaticWorld.creatureTemplates[Type.CandleMouse.Index] = template;
+            Debug.Log(StaticWorld.creatureTemplates[Type.CandleMouse.Index]);
+
+            #endregion
+
             #region SpinePlant
+            /*
             CreatureTemplate spinePlant = new CreatureTemplate(Type.SpinePlant, null, list2, list3, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Eats, 1f));
             spinePlant.baseDamageResistance = 3.5f;
             spinePlant.baseStunResistance = 1f;
@@ -547,10 +574,11 @@ namespace DeadlandsCreatures.Hooks
             list3.Clear();
 
             StaticWorld.creatureTemplates[Type.SpinePlant.Index] = spinePlant;
+            */
             #endregion
 
             #region SaltWorm
-
+            /*
             CreatureTemplate creatureTemplate15 = StaticWorld.GetCreatureTemplate(CreatureTemplate.Type.Centipede);
 
             if (creatureTemplate == null)
@@ -574,19 +602,17 @@ namespace DeadlandsCreatures.Hooks
             saltWorm.throwAction = "Release";
             list2.Clear();
             list3.Clear();
-
-            #endregion
             */
-            
+            #endregion
+
+
         }
         private static void OnInitStaticWorld(On.StaticWorld.orig_InitStaticWorld orig)
         {
-            Plugin.Logger.LogFatal("OnInitStaticWorld Begin");
 
             orig();
 
             // Establish Relationships here
-            Plugin.Logger.LogFatal("OnInitStaticWorld Buzzard");
             #region Buzzard
 
             StaticWorld.EstablishRelationship(Type.Buzzard, CreatureTemplate.Type.GreenLizard, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Eats, 0.55f));
@@ -596,7 +622,6 @@ namespace DeadlandsCreatures.Hooks
 
             #endregion
 
-            Plugin.Logger.LogFatal("OnInitStaticWorld Iguana");
             #region Iguana
             
             StaticWorld.EstablishRelationship(Type.Iguana, CreatureTemplate.Type.Slugcat, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.SocialDependent, 0.5f));
@@ -607,7 +632,6 @@ namespace DeadlandsCreatures.Hooks
             StaticWorld.EstablishRelationship(Type.Iguana, Type.Iguana, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Ignores, 0f));
             #endregion
             
-            Plugin.Logger.LogFatal("OnInitStaticWorld BrownLizard");
             #region BrownLizard
             
             StaticWorld.EstablishRelationship(Type.BrownLizard, CreatureTemplate.Type.Slugcat, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.SocialDependent, 0.5f));
@@ -619,14 +643,39 @@ namespace DeadlandsCreatures.Hooks
             
             #endregion
             
-            Plugin.Logger.LogFatal("OnInitStaticWorld GlowLizard");
             #region GlowLizard
             
             StaticWorld.EstablishRelationship(Type.GlowLizard, CreatureTemplate.Type.Slugcat, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.SocialDependent, 0.5f));
             StaticWorld.EstablishRelationship(Type.GlowLizard, CreatureTemplate.Type.LizardTemplate, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.AgressiveRival, 0.1f));
             StaticWorld.EstablishRelationship(Type.GlowLizard, Type.Iguana, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, 0.35f));
             StaticWorld.EstablishRelationship(Type.GlowLizard, Type.BrownLizard, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, 1f));
-            
+
+            #endregion
+
+            #region CandleMouse
+
+            StaticWorld.EstablishRelationship(Type.Buzzard, Type.CandleMouse, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Eats, 0.7f));
+            StaticWorld.EstablishRelationship(CreatureTemplate.Type.Fly, Type.CandleMouse, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, 0.65f));
+
+            StaticWorld.EstablishRelationship(CreatureTemplate.Type.LizardTemplate, Type.CandleMouse, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Eats, 0.2f));
+            StaticWorld.EstablishRelationship(CreatureTemplate.Type.Scavenger, Type.CandleMouse, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Uncomfortable, 0.3f));
+            StaticWorld.EstablishRelationship(CreatureTemplate.Type.BigSpider, Type.CandleMouse, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Eats, 0.4f));
+            StaticWorld.EstablishRelationship(CreatureTemplate.Type.SpitterSpider, Type.CandleMouse, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Eats, 0.6f));
+            StaticWorld.EstablishRelationship(CreatureTemplate.Type.LanternMouse, Type.CandleMouse, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.PlaysWith, 0.01f));
+            StaticWorld.EstablishRelationship(CreatureTemplate.Type.CicadaA, Type.CandleMouse, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Antagonizes, 0.01f));
+
+            StaticWorld.EstablishRelationship(Type.CandleMouse, Type.CandleMouse, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.PlaysWith, 0.01f));
+            StaticWorld.EstablishRelationship(Type.CandleMouse, CreatureTemplate.Type.LanternMouse, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.PlaysWith, 0.01f));
+            StaticWorld.EstablishRelationship(Type.CandleMouse, CreatureTemplate.Type.LizardTemplate, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, 0.7f));
+            StaticWorld.EstablishRelationship(Type.CandleMouse, CreatureTemplate.Type.Slugcat, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, 0.3f));
+            StaticWorld.EstablishRelationship(Type.CandleMouse, CreatureTemplate.Type.Fly, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Eats, 0.5f));
+            StaticWorld.EstablishRelationship(Type.CandleMouse, CreatureTemplate.Type.BigSpider, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, 0.6f));
+            StaticWorld.EstablishRelationship(Type.CandleMouse, CreatureTemplate.Type.DropBug, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, 0.7f));
+            StaticWorld.EstablishRelationship(Type.CandleMouse, CreatureTemplate.Type.SmallCentipede, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Ignores, 0f));
+            StaticWorld.EstablishRelationship(Type.CandleMouse, CreatureTemplate.Type.RedCentipede, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, 1f));
+            StaticWorld.EstablishRelationship(Type.CandleMouse, CreatureTemplate.Type.TentaclePlant, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, 0.5f));
+            StaticWorld.EstablishRelationship(Type.CandleMouse, CreatureTemplate.Type.Scavenger, new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, 0.4f));
+
             #endregion
             /*
             Plugin.Logger.LogFatal("OnInitStaticWorld SpinePlant");
@@ -648,7 +697,6 @@ namespace DeadlandsCreatures.Hooks
             // Todo: Relationships
             #endregion
             */
-            Plugin.Logger.LogFatal("OnInitStaticWorld End");
         }
         #endregion
 
@@ -680,6 +728,10 @@ namespace DeadlandsCreatures.Hooks
             if (s.Equals("saltworm", StringComparison.OrdinalIgnoreCase))
             {
                 return Type.SaltWorm;
+            }
+            if (s.Equals("candlemouse", StringComparison.OrdinalIgnoreCase))
+            {
+                return Type.CandleMouse;
             }
             return orig(s);
         }
@@ -718,6 +770,10 @@ namespace DeadlandsCreatures.Hooks
             if (creatureTemplate.type == Type.GlowLizard && creatureTemplate.TopAncestor().type == CreatureTemplate.Type.BlueLizard)
             {
                  self.state = new LizardState(self);
+            }
+            if (creatureTemplate.type == Type.CandleMouse)
+            {
+                self.state = new CandleState(self);
             }
 
             // Creature Abstract AI
@@ -784,7 +840,7 @@ namespace DeadlandsCreatures.Hooks
                     // Creature Realization
                     if (abstractCreature.creatureTemplate.TopAncestor().type == Type.Buzzard)
                     {
-                        abstractCreature.realizedCreature = new Vulture(abstractCreature, abstractCreature.world);
+                        abstractCreature.realizedCreature = new Buzzard(abstractCreature, abstractCreature.world);
                     }
                     if (abstractCreature.creatureTemplate.TopAncestor().type == Type.Iguana)
                     {
@@ -809,6 +865,10 @@ namespace DeadlandsCreatures.Hooks
                     {
                         abstractCreature.realizedCreature = new Centipede(abstractCreature, abstractCreature.world);
                     }
+                    if (abstractCreature.creatureTemplate.TopAncestor().type == Type.CandleMouse)
+                    {
+                        abstractCreature.realizedCreature = new CandleMouse(abstractCreature, abstractCreature.world);
+                    }
                 });
             }
 
@@ -832,6 +892,10 @@ namespace DeadlandsCreatures.Hooks
             if (self.creatureTemplate.type == Type.GlowLizard)
             {
                 self.abstractAI.RealAI = new LizardAI(self, self.world);
+            }
+            if (self.creatureTemplate.type == Type.CandleMouse)
+            {
+                self.abstractAI.RealAI = new CandleAI(self, self.world);
             }
         }
 
@@ -866,6 +930,10 @@ namespace DeadlandsCreatures.Hooks
             if (type == Type.SaltWorm)
             {
                 self.name = "SaltWorm";
+            }
+            if (type == Type.CandleMouse)
+            {
+                self.name = "CandleMouse";
             }
         }
 

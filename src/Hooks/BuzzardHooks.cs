@@ -1,4 +1,4 @@
-﻿using DeadlandsCreatures.Features.Buzzard;
+﻿using DeadlandsCreatures.Creatures.Buzzard;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using RWCustom;
@@ -167,7 +167,6 @@ namespace DeadlandsCreatures.Hooks
             {
                 Plugin.Logger.LogFatal("ILDrawSprites failed!");
             }
-            Plugin.Logger.LogFatal(il.ToString());
         }
 
         private static void OnDrawSprites(On.VultureGraphics.orig_DrawSprites orig, VultureGraphics self, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)

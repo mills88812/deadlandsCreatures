@@ -1,9 +1,9 @@
 ﻿{
 	"id": "DeadLandsCreautres",
 	"name": "Deadlands Creatures",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"authors": "mills888",
-	"description": "the creature addon for deadlands",
-	"requirements": [ "lizardcustomizer", "fisobs", "slime-cubed.devconsole" ],
-	"requirements_names": [ "lizard customizer", "Fisobs", "DevConsole" ]
+	"description": "Creature & Object addons for Deadlands",
+	"requirements": [],
+	"requirements_names": []
 }
