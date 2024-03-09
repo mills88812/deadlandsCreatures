@@ -47,7 +47,7 @@ namespace DeadlandsCreatures.Hooks
           //  On.LizardGraphics.ColorBody += OnIguanacolor;
             // On.LizardGraphics.DynamicBodyColor += IguanaLizardBodyColors3;
             On.LizardGraphics.ApplyPalette += OnIguanacolorBody;
-            On.LizardGraphics.DrawSprites += Onhead;
+           // On.LizardGraphics.DrawSprites += Onhead;
             IL.OverseerAbstractAI.HowInterestingIsCreature += ILOverseeIguana;
             LizardCosmetics.Init();
         }
