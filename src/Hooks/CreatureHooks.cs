@@ -492,7 +492,7 @@ namespace DeadlandsCreatures.Hooks
             #endregion
 
             #region CandleMouse
-
+            /*
             creatureTemplate = StaticWorld.GetCreatureTemplate(CreatureTemplate.Type.StandardGroundCreature);
             bool flag2 = creatureTemplate == null;
             if (flag2)
@@ -544,7 +544,7 @@ namespace DeadlandsCreatures.Hooks
             list3.Clear();
             StaticWorld.creatureTemplates[Type.CandleMouse.Index] = template;
             Debug.Log(StaticWorld.creatureTemplates[Type.CandleMouse.Index]);
-
+            */
             #endregion
 
             #region SpinePlant
@@ -865,10 +865,12 @@ namespace DeadlandsCreatures.Hooks
                     {
                         abstractCreature.realizedCreature = new Centipede(abstractCreature, abstractCreature.world);
                     }
+                    /*
                     if (abstractCreature.creatureTemplate.TopAncestor().type == Type.CandleMouse)
                     {
                         abstractCreature.realizedCreature = new CandleMouse(abstractCreature, abstractCreature.world);
                     }
+                    */
                 });
             }
 
@@ -893,10 +895,12 @@ namespace DeadlandsCreatures.Hooks
             {
                 self.abstractAI.RealAI = new LizardAI(self, self.world);
             }
+            /*
             if (self.creatureTemplate.type == Type.CandleMouse)
             {
                 self.abstractAI.RealAI = new CandleAI(self, self.world);
             }
+            */
         }
 
         #endregion

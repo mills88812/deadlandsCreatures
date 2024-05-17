@@ -35,7 +35,7 @@ namespace DeadlandsCreatures
             Iguana = new CreatureTemplate.Type("IguanaLizard", true);
             BrownLizard = new CreatureTemplate.Type("BrownLizard", true);
             GlowLizard = new CreatureTemplate.Type("GlowLizard", true);
-            CandleMouse = new CreatureTemplate.Type("CandleMouse", true);
+           // CandleMouse = new CreatureTemplate.Type("CandleMouse", true);
         }
         public static void UnregisterValues()
         {
@@ -55,10 +55,12 @@ namespace DeadlandsCreatures
             {
                 GlowLizard.Unregister();
             }
+            /*
             if (CandleMouse != null)
             {
                 CandleMouse.Unregister();
             }
+            */
         }
     }
 

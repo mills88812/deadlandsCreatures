@@ -10,6 +10,7 @@ using Random = UnityEngine.Random;
 using LizardCosmetics;
 using System.Collections.Generic;
 using System.Drawing;
+using DeadlandsCreatures.Creatures.Glow;
 
 
 
@@ -18,7 +19,7 @@ namespace DeadlandsCreatures.Hooks
     internal class GlowLizardHook
     {
 
-         
+         public static readonly ConditionalWeakTable<Lizard, GlowModule> GlowModule = new();
 
         public static void Apply()
         {
@@ -38,7 +39,7 @@ namespace DeadlandsCreatures.Hooks
             //  On.LizardGraphics.ApplyPalette += OnIguanacolorBody;
 
             // On.LizardGraphics.InitiateSprites += OnGlowInitiateSprites;
-            IL.OverseerAbstractAI.HowInterestingIsCreature += ILOverseeIguana;
+            IL.OverseerAbstractAI.HowInterestingIsCreature += ILOverseeGlow;
 
             
         }
@@ -58,10 +59,9 @@ namespace DeadlandsCreatures.Hooks
 
                 Random.state = state;
 
+                GlowModule.Add(self, new GlowModule(self));
+
             }
-
-
-
         }
 
         private static SoundID OnGlowVoice (On.LizardVoice.orig_GetMyVoiceTrigger orig, LizardVoice self)
@@ -86,74 +86,6 @@ namespace DeadlandsCreatures.Hooks
                     res = list[Random.Range(0, list.Count)];
             }
             return res;
-        }
-        private static void OnGlowLimb(On.LizardLimb.orig_ctor orig, LizardLimb self, GraphicsModule owner, BodyChunk connectionChunk, int num, float rad, float sfFric, float aFric, float huntSpeed, float quickness, LizardLimb otherLimbInPair)
-        {
-            if (owner is LizardGraphics iguana && iguana.lizard.Template.type == Type.GlowLizard)
-            {
-                self.grabSound = SoundID.Lizard_BlueWhite_Foot_Grab;
-                self.releaseSeound = SoundID.Lizard_BlueWhite_Foot_Release;
-
-            };
-
-
-            orig(self, owner, connectionChunk, num, rad, sfFric, aFric, huntSpeed, quickness, otherLimbInPair);
-        }
-        private static void OnGlowcolorctor(On.LizardGraphics.orig_ctor orig, LizardGraphics self, PhysicalObject ow)
-        {
-            orig(self, ow);
-
-            Random.State state = Random.state;
-            Random.InitState(self.lizard.abstractCreature.ID.RandomSeed);
-            var num = self.startOfExtraSprites + self.extraSprites;
-            int num2 = 0;
-            if (self.lizard.Template.type == Type.GlowLizard)
-            {
-
-
-
-
-
-                if (Random.value < 0.1f)
-                {
-                    num = self.AddCosmetic(num, new BumpHawk(self, num));
-                    num2++;
-                }
-                
-                
-
-
-
-
-
-
-                Random.state = state;
-            }
-
-        }
-        private static void OnGlowAIUpdate(On.LizardAI.orig_Update orig, global::LizardAI self)
-        {
-            orig(self);
-
-           
-            if (self.lizard.Template.type == Type.GlowLizard)
-            {
-                self.noiseTracker.hearingSkill = Custom.LerpMap(self.runSpeed, 0f, 0.7f, 1.8f, 0.7f);
-            }
-
-        }
-        private static void OnwhiteGlow(On.LizardGraphics.orig_DrawSprites orig, LizardGraphics self, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
-        {
-            orig(self, sLeaser, rCam, timeStacker, camPos);
-
-            if (self.lizard.Template.type == Type.GlowLizard)
-            {
-                sLeaser.sprites[self.SpriteHeadStart + 1].color = new Color(1f, 1f, 1f);
-                sLeaser.sprites[self.SpriteHeadStart + 2].color = new Color(1f, 1f, 1f);
-                sLeaser.sprites[self.SpriteHeadStart + 4].color = new Color(1f, 1f, 1f);
-                
-            }
-            
         }
         private static void OnTongeglow(On.LizardTongue.orig_ctor orig, LizardTongue self, Lizard lizard)
         {
@@ -180,51 +112,59 @@ namespace DeadlandsCreatures.Hooks
                 self.totRExtraLimit = 80f;
             }
         }
-        /* private static void Onvoicess(On.LizardVoice.orig_GetMyVoiceTrigger orig, LizardVoice self)
-         {
+        private static void OnGlowLimb(On.LizardLimb.orig_ctor orig, LizardLimb self, GraphicsModule owner, BodyChunk connectionChunk, int num, float rad, float sfFric, float aFric, float huntSpeed, float quickness, LizardLimb otherLimbInPair)
+        {
+            if (owner is LizardGraphics iguana && iguana.lizard.Template.type == Type.GlowLizard)
+            {
+                self.grabSound = SoundID.Lizard_BlueWhite_Foot_Grab;
+                self.releaseSeound = SoundID.Lizard_BlueWhite_Foot_Release;
+
+            };
 
 
+            orig(self, owner, connectionChunk, num, rad, sfFric, aFric, huntSpeed, quickness, otherLimbInPair);
+        }
+        private static void OnGlowAIUpdate(On.LizardAI.orig_Update orig, global::LizardAI self)
+        {
+            orig(self);
 
-             SoundID result = orig(self);
-                 Lizard lizard = self.lizard;
-                 if (lizard != null)
-                 {
-                     string[] array = new string[]
-                     {
-                     "A",
-                     "B",
-                     "C",
-                     "D",
-                     "E"
-                     };
-                     List<SoundID> list = [];
-                     if (lizard.Template.type == TypeL.GlowLizard)
-                     {
-                         for (int i = 0; i < array.Length; i++)
-                         {
-                             SoundID soundID = SoundID.None;
-                             string text = "Lizard_Voice_Red_" + array[i];
-                             if (ExtEnum<SoundID>.values.entries.Contains(text))
-                             {
-                                 soundID = new SoundID(text, false);
-                             }
-                             if (soundID != SoundID.None && soundID.Index != -1 && lizard.abstractCreature.world.game.soundLoader.workingTriggers[soundID.Index])
-                             {
-                                 list.Add(soundID);
-                             }
-                         }
-                         if (list.Count == 0)
-                         {
-                     }
-                     else
-                         {
-                         _ = list[Random.Range(0, list.Count)];
-                         }
-                     }
-                 }
-             return ;
+           
+            if (self.lizard.Template.type == Type.GlowLizard)
+            {
+                self.noiseTracker.hearingSkill = Custom.LerpMap(self.runSpeed, 0f, 0.7f, 1.8f, 0.7f);
+            }
 
-         }*/
+        }
+        private static void OnGlowcolorctor(On.LizardGraphics.orig_ctor orig, LizardGraphics self, PhysicalObject ow)
+        {
+            orig(self, ow);
+
+            Random.State state = Random.state;
+            Random.InitState(self.lizard.abstractCreature.ID.RandomSeed);
+            var num = self.startOfExtraSprites + self.extraSprites;
+            int num2 = 0;
+            if (self.lizard.Template.type == Type.GlowLizard)
+            {
+            if (Random.value < 0.97f)
+            {
+                num = self.AddCosmetic(num, new glowcircul(self, num));
+                num2++;
+            }
+            if (Random.value < 1f)
+            {
+                num = self.AddCosmetic(num, new TailTipGlow(self, num));
+                num2++;
+            }
+            if (Random.value < 0.1f)
+            {
+                num = self.AddCosmetic(num, new BumpHawk(self, num));
+                num2++;
+            }
+
+                Random.state = state;
+            }
+
+        }
         private static void OnUpdateGraphics(On.LizardGraphics.orig_Update orig, LizardGraphics self)
         {
             orig(self);
@@ -233,74 +173,31 @@ namespace DeadlandsCreatures.Hooks
            
             if (self.lizard.Template.type == Type.GlowLizard)
             {
-                float lightMode = 0;
-                if (self.lizard.animation == Lizard.Animation.ThreatReSpotted || self.lizard.animation == Lizard.Animation.PreyReSpotted || self.lizard.animation == Lizard.Animation.PreySpotted || self.lizard.animation == Lizard.Animation.FightingStance || self.lizard.animation == Lizard.Animation.ThreatSpotted)
+                GlowModule.TryGetValue(self.lizard, out var data);
+                if (data != null)
                 {
-                    lightMode += 140;
+                // Debug.Log("I have glow data");
+                data.UpdateGraphics(self);
                 }
-                if (self.lizard.animation == Lizard.Animation.HearSound)
-                {
-                    lightMode += 100;
-                }
-                if (self.lizard.Stunned)
-                {
-
-                    lightMode = 0;
-
-                }
-                if (self.lizard.dead)
-                {
-
-                    self.lightSource = null;
-
-                }
-
-                if (!self.lizard.dead )
-                {
-
-                    lightMode = Mathf.Lerp(lightMode, 5f, 1f / 20f);
-
-                }
-                if (self.lightSource != null)
-                {
-                    self.lightSource.stayAlive = true;
-                    self.lightSource.setPos = self.head.pos;
-                    self.lightSource.setRad = Mathf.Lerp(Mathf.Lerp(160f, 560f, lightMode * (100f + self.flicker)), ( lightMode) + 200f, 800f);
-                    self.lightSource.setAlpha = Mathf.Lerp(Mathf.Lerp(0.8f, 0.3f, lightMode), 2f, Custom.SCurve(1f, 0.3f) * 0.5f) * 0.9f * (1f + self.flicker * 0.4f);
-                    self.lightSource.color = Custom.HSL2RGB(Custom.WrappedRandomVariation(.06f, .03f, .66f), 1f, Custom.ClampedRandomVariation(0.6f, .03f, 0.9f));
-                    if (self.lightSource.slatedForDeletetion || self.lizard.room.Darkness(self.head.pos) == 0f)
-                    {
-                        self.lightSource = null;
-                    }
-                }
-                else if (self.lizard.room.Darkness(self.head.pos) > 0f)
-                {
-                    self.lightSource = new LightSource(self.head.pos, environmentalLight: false, new Color(1f, 1f, 1f), self.lizard);
-                    self.lightSource.requireUpKeep = true;
-                    self.lizard.room.AddObject(self.lightSource);
-                }
-                
-                /*if (self.lightSource != null)
-                {
-                    self.lightSource.stayAlive = true;
-                    self.lightSource.setPos = self.tail[4].pos;
-                    self.lightSource.setRad = Mathf.Lerp(Mathf.Lerp(160f, 560f, lightMode * (100f + self.flicker)), (lightMode) + 200f, 800f);
-                    self.lightSource.setAlpha = Mathf.Lerp(Mathf.Lerp(0.8f, 0.3f, lightMode), 2f, Custom.SCurve(1f, 0.3f) * 0.5f) * 0.9f * (1f + self.flicker * 0.4f);
-                    self.lightSource.color = Custom.HSL2RGB(Custom.WrappedRandomVariation(.06f, .03f, .66f), 1f, Custom.ClampedRandomVariation(0.6f, .03f, 0.9f));
-                    if (self.lightSource.slatedForDeletetion || self.lizard.room.Darkness(self.tail[4].pos) == 0f)
-                    {
-                        self.lightSource = null;
-                    }
-                }
-                else if (self.lizard.room.Darkness(self.tail[4].pos) > 0f)
-                {
-                    self.lightSource = new LightSource(self.tail[4].pos, environmentalLight: false, new Color(1f, 1f, 1f), self.lizard);
-                    self.lightSource.requireUpKeep = true;
-                    self.lizard.room.AddObject(self.lightSource);
-                }*/
             }
 
         }
+        private static void OnwhiteGlow(On.LizardGraphics.orig_DrawSprites orig, LizardGraphics self, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
+        {
+            orig(self, sLeaser, rCam, timeStacker, camPos);
+
+            if (self.lizard.Template.type == Type.GlowLizard)
+            {
+                sLeaser.sprites[self.SpriteHeadStart + 1].color = new Color(1f, 1f, 1f);
+                sLeaser.sprites[self.SpriteHeadStart + 2].color = new Color(1f, 1f, 1f);
+                sLeaser.sprites[self.SpriteHeadStart + 4].color = new Color(1f, 1f, 1f);
+                
+            }
+            
+        }
+        
+        
+        
 
 
         private static void OnGlowcolorBody(On.LizardGraphics.orig_ColorBody orig, LizardGraphics self, RoomCamera.SpriteLeaser sLeaser, Color col)
@@ -327,27 +224,8 @@ namespace DeadlandsCreatures.Hooks
 
 
 
-        private static void OnGlowInitiateSprites(On.LizardGraphics.orig_InitiateSprites orig, LizardGraphics self, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
-        {
-            int num3 = self.SpriteLimbsColorStart - self.SpriteLimbsStart;
-            if (self.lizard.Template.type == Type.GlowLizard)
-            {
-                for (int num4 = self.SpriteLimbsStart; num4 < self.SpriteLimbsEnd; num4++)
-                {
-                    FSprite fSprite6 = new FSprite("pixel");
-                    sLeaser.sprites[num4] = fSprite6;
-                    fSprite6.x = -10000f;
-                    fSprite6.scale = self.lizard.lizardParams.limbSize;
-                    fSprite6.color = Custom.HSL2RGB(Custom.WrappedRandomVariation(.06f, .03f, .66f), 1f, Custom.ClampedRandomVariation(0.34f, .03f, .9f));
-                    fSprite6 = new FSprite("pixel");
-                    sLeaser.sprites[num4 + num3] = fSprite6;
-                    fSprite6.x = -10000f;
-                    fSprite6.scale = self.lizard.lizardParams.limbSize;
-                    fSprite6.color = Custom.HSL2RGB(Custom.WrappedRandomVariation(.06f, .03f, .66f), 1f, Custom.ClampedRandomVariation(0.34f, .03f, .9f));
-                }
-            }
-        }
-        private static void ILOverseeIguana(ILContext il)
+       
+        private static void ILOverseeGlow(ILContext il)
         {
             ILCursor c = new(il);
             ILLabel? label = null;
